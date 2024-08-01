@@ -64,7 +64,7 @@ int main(int /*argc*/, char** /*argv*/)
         pCam->Init();
         pCam->BeginAcquisition();
 
-        unordered_set<int> targetBrightnesses = {50, 100, 125, 135, 145, 150, 160, 175, 200, 225};
+        unordered_set<int> targetBrightnesses = {5,10,20,35,50 ,82 ,85 ,90, 100, 125, 135, 145, 150, 160, 175, 200, 225};
         unordered_set<int> capturedBrightnesses;
 
         while (capturedBrightnesses.size() < targetBrightnesses.size())
@@ -88,13 +88,21 @@ int main(int /*argc*/, char** /*argv*/)
                 cout << "Current Brightness: " << currentBrightness << "      Exposuretime: " << exposureTime << "      Gain: " << gain << endl;
                 
                 ImageProcessor processor;
+                // Well-balanced speed and quality.
+                // processor.SetColorProcessing(SPINNAKER_COLOR_PROCESSING_ALGORITHM_HQ_LINEAR);
+                // Weighted pixel average from different directions.
+                processor.SetColorProcessing(SPINNAKER_COLOR_PROCESSING_ALGORITHM_WEIGHTED_DIRECTIONAL_FILTER);
                 int roundedBrightness = static_cast<int>(currentBrightness);
                 if (targetBrightnesses.find(roundedBrightness) != targetBrightnesses.end() &&
                     capturedBrightnesses.find(roundedBrightness) == capturedBrightnesses.end())
                 {
                     capturedBrightnesses.insert(roundedBrightness);
+                    // patern 1
                     std::string filename = "/home/ruan-x/rsworkSpace/src/acquisition/output/Brightness_" + std::to_string(roundedBrightness) + ".jpg";
-                    ImagePtr imageCopy = processor.Convert(pResultImage, PixelFormat_Mono8);
+                    ImagePtr imageCopy = processor.Convert(pResultImage, PixelFormat_Mono8);//8BITに圧縮している
+                    // patern 2
+                    // std::string filename = "/home/ruan-x/rsworkSpace/src/acquisition/output/Brightness_" + std::to_string(roundedBrightness) + "_12bit.jpg";
+                    // ImagePtr imageCopy = processor.Convert(pResultImage, PixelFormat_Mono12p);//16BITに圧縮している
                     SaveImage(imageCopy, filename);
                     cout << "Saved image: " << filename << endl;
                 }
