@@ -1,0 +1,7 @@
+<launch>
+    <!-- Launch the keyboard input publisher node -->
+    <node pkg="keyboard_acq" type="keyboard_publisher" name="keyboard_publisher" output="screen"/>
+    
+    <!-- Launch the camera parameter switching node -->
+    <node pkg="keyboard_acq" type="camera_node" name="camera_node" output="screen"/>
+</launch>
